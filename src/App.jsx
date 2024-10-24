@@ -1,41 +1,41 @@
-import './App.css'
-import { useState } from 'react'
-import { useEffect } from 'react'
-import ContactList from './components/ContactList/ContactList'
-import SearchBox from './components/SearchBox/SearchBox'
-import ContactForm from './components/ContactForm/ContactForm'
+
+import './App.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts, addContact, deleteContact } from './redux/contactsSlice';
+import { selectNameFilter, changeFilter } from './redux/filtersSlice';
+import ContactList from './components/ContactList/ContactList';
+import SearchBox from './components/SearchBox/SearchBox';
+import ContactForm from './components/ContactForm/ContactForm';
 
 const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const savedContacts = localStorage.getItem('contacts');
-    return savedContacts ? JSON.parse(savedContacts) : [];
-  });
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
+  const searchTerm = useSelector(selectNameFilter);
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-  const addContact = (newContact) => {
-    setContacts((prevContacts) => [...prevContacts, newContact]);
+  const handleAddContact = newContact => {
+    dispatch(addContact(newContact));
   };
-  const filteredContacts = contacts.filter(contact =>
+
+  const handleSearchChange = value => {
+    dispatch(changeFilter(value));
+  };
+
+  const handleDeleteContact = id => {
+    dispatch(deleteContact(id));
+  };
+
+  const filteredContacts = contacts?.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-   const deleteContact = (contactId) => {
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== contactId)
-    );
-  };
+  ) || [];
+
   return (
     <>
       <h1>Phonebook</h1>
-      <ContactForm addContact={addContact} />
-      <SearchBox searchValue={searchTerm} handleSearchChange={setSearchTerm} />
-      <ContactList contacts={filteredContacts} deleteContact={deleteContact}/>
+      <ContactForm addContact={handleAddContact} />
+      <SearchBox searchValue={searchTerm} handleSearchChange={handleSearchChange} />
+      <ContactList contacts={filteredContacts} deleteContact={handleDeleteContact} />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

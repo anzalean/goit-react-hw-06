@@ -1,11 +1,22 @@
+
 import styles from './SearchBox.module.css';
-const SearchBox = ({ searchValue, handleSearchChange }) => {
+import { useDispatch } from 'react-redux';
+import { changeFilter } from '../../redux/filtersSlice';
+
+const SearchBox = ({ searchValue }) => {
+  const dispatch = useDispatch();
+
+  const handleSearchChange = (e) => {
+    dispatch(changeFilter(e.target.value));
+  };
+
   return (
-    <input className={styles.searchBox}
+    <input
+      className={styles.searchBox}
       type="text"
       placeholder="Пошук за ім'ям..."
       value={searchValue}
-      onChange={(e) => handleSearchChange(e.target.value)}
+      onChange={handleSearchChange}
     />
   );
 };
