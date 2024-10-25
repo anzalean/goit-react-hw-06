@@ -1,4 +1,3 @@
-
 import styles from './Contact.module.css';
 
 const Contact = ({ id, name, number, deleteContact }) => {
